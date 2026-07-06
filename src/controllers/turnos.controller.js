@@ -26,7 +26,7 @@ const createTurno = (req, res)=>{
         especialidad
     };
     turnos.push(nuevoTurno);
-    res.status(201).json({message:"ok", data: nuevoTurno})
+    res.status(201).json({message:"Se creo el turno correctamente", data: nuevoTurno})
 };
 
 const deleteTurnos = (req, res)=>{
@@ -38,7 +38,7 @@ const deleteTurnos = (req, res)=>{
     }
 
     turnos = turnos.filter(t=> t.id !== parseInt(id) );
-    res.status(200).json({message: 'ok', data: turnos})
+    res.status(200).json({message: 'Se elimino el turno correctamente', data: turnos})
 };
 
 const getPorEspecialidad = (req, res)=>{
