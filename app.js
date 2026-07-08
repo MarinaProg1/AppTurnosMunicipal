@@ -1,21 +1,35 @@
+require('dotenv').config();
 
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+
 const app = express();
 
+// Middlewares
+const auditoria = require('./src/middlewares/auditoria.middleware');
+const errorHandler = require('./src/middlewares/errorHandler.middleware');
+
+// Rutas
 const turnosRoutes = require('./src/routes/turnos.routes');
 
-const PORT = parseInt(process.env.PORT, 10) || 3000
-
-
+// Middlewares globales
 app.use(cors());
 app.use(express.json());
+app.use(auditoria);
 
-
-
+// Rutas
 app.use('/api/v1/turnos', turnosRoutes);
 
-app.listen(PORT,()=>{
-    console.log(`Servidor escuchando en http://localhost:${PORT}`)
+// Middleware de manejo de errores (siempre al final)
+app.use(errorHandler);
+
+// Puerto
+const PORT = parseInt(process.env.PORT, 10) || 3000;
+
+// Iniciar servidor
+app.listen(PORT, () => {
+    console.log("===============================================");
+    console.log("========= SERVIDOR MUNICIPAL ACTIVO ===========");
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+    console.log("===============================================");
 });

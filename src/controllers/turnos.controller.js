@@ -5,18 +5,27 @@ let turnos= [
     {id:4, paciente: "Marcela Crass", dni:"23227890", especialidad:"dentista"},
 ]
 
-const getTurnos = (req, res)=>{
-    res.status(200).json({
-        total: turnos.length, 
-        data: turnos
+const respuestaEstandar = (res, status, success, message, data = null)=>{
+    return res.status(status).json({
+        success,
+        timetamp: new Date().toISOString(),
+        message,
+        total: Array.isArray(data) ? data.length : data ? 1:0,
+        data
     });
+};
+
+
+
+const getTurnos = (req, res)=>{
+    respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
 };
 
 const createTurno = (req, res)=>{
     const { paciente, dni, especialidad} = req.body;
 
     if (!paciente || !dni || !especialidad){
-        return res.status(400).json({error: "Faltan datos requeridos"});
+        return respuestaEstandar(res, 400, false, 'Faltan datos requeridos')
     }
 
     const nuevoTurno = {
@@ -26,7 +35,7 @@ const createTurno = (req, res)=>{
         especialidad
     };
     turnos.push(nuevoTurno);
-    res.status(201).json({message:"Se creo el turno correctamente", data: nuevoTurno})
+    respuestaEstandar(res, 201, true,' Turno creado exitosamente',nuevoTurno)
 };
 
 const deleteTurnos = (req, res)=>{
@@ -34,39 +43,27 @@ const deleteTurnos = (req, res)=>{
     const turnoExiste = turnos.some(t=>t.id === parseInt(id));
 
     if(!turnoExiste){
-        return res.status(404).json({error: "Turno no encontrado"});
+        return respuestaEstandar(res, 404,false, 'Turno no encontrado');
     }
 
     turnos = turnos.filter(t=> t.id !== parseInt(id) );
-    res.status(200).json({message: 'Se elimino el turno correctamente', data: turnos})
+
+   respuestaEstandar(res, 200, true, 'Se elimino correctamente', turnos);
+    
 };
 
 const getPorEspecialidad = (req, res)=>{
     const {especialidad}= req.params;
-    const turnoFiltrado = turnos.filter(t => t.especialidad.toLocaleLowerCase()=== especialidad);
+    const turnoFiltrado = turnos.filter(t => t.especialidad.toLocaleLowerCase() === especialidad.toLocaleLowerCase());
    
     
     if (turnoFiltrado.length === 0) {
-
-    const sugerencia = turnos.find(t =>
-        t.especialidad.toLowerCase().includes(especialidad.toLowerCase()) ||
-        especialidad.toLowerCase().includes(t.especialidad.toLowerCase())
-    );
-
-    if (sugerencia) {
-        return res.status(404).json({
-            error: `No existe la especialidad "${especialidad}". ¿Quiso decir "${sugerencia.especialidad}"?`
-        });
+     respuestaEstandar(res, 404, false, 'No se encontro el turno', turnoFiltrado);
     }
 
-    return res.status(404).json({
-        error: `No existe la especialidad "${especialidad}".`
-    });
-}
+    return respuestaEstandar(res, 200, true, `Datos de pasientes con especialidad ${turnoFiltrado}`, turnoFiltrado);
+};
     
-    res.status(200).json({ total: turnoFiltrado.length, data: turnoFiltrado});
-
-}
 
 module.exports = {
     getTurnos,
