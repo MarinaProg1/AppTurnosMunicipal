@@ -1,9 +1,13 @@
 require('dotenv').config();
 
 const express = require('express');
+const connectDB = require('./src/config/database');
 const cors = require('cors');
 
 const app = express();
+
+// Conectar a la base de datos
+connectDB();
 
 // Middlewares
 const auditoria = require('./src/middlewares/auditoria.middleware');

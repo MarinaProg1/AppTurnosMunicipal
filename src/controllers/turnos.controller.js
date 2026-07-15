@@ -1,3 +1,5 @@
+const Turno = require('../models/Turno');
+
 let turnos= [
     {id:1, paciente: "Juan Perez", dni:"43567890", especialidad:"cardiología"},
     {id:2, paciente: "Ramon Looss", dni:"40367890", especialidad:"pediatría"},
@@ -21,21 +23,21 @@ const getTurnos = (req, res)=>{
     respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
 };
 
-const createTurno = (req, res)=>{
-    const { paciente, dni, especialidad} = req.body;
-
-    if (!paciente || !dni || !especialidad){
-        return respuestaEstandar(res, 400, false, 'Faltan datos requeridos')
+const createTurno = async (req, res)=>{
+    try{
+        const nuevoTurno = await Turno.create(req.body);
+        respuestaEstandar(res, 201, true, 'Turno creado exitosamente', nuevoTurno); 
+    }catch(error){
+        if(error.name === 'ValidationError'){
+            const errores = Object.values(error.errors).map(err => err.message);
+            respuestaEstandar(res, 400, false, 'Error de validación', errores);
+        
+        }
+            respuestaEstandar(res, 500, false, 'Error al crear el turno', error.message);
+        
     }
-
-    const nuevoTurno = {
-        id: turnos.length + 1,
-        paciente,
-        dni,
-        especialidad
-    };
-    turnos.push(nuevoTurno);
-    respuestaEstandar(res, 201, true,' Turno creado exitosamente',nuevoTurno)
+    
+    
 };
 
 const deleteTurnos = (req, res)=>{
@@ -52,18 +54,21 @@ const deleteTurnos = (req, res)=>{
     
 };
 
-const getPorEspecialidad = (req, res)=>{
-    const {especialidad}= req.params;
-    const turnoFiltrado = turnos.filter(t => t.especialidad.toLocaleLowerCase() === especialidad.toLocaleLowerCase());
-   
-    
+const getPorEspecialidad = (req, res) => {
+    const { especialidad } = req.params;
+
+    const turnoFiltrado = turnos.filter(
+        t => t.especialidad.toLowerCase() === especialidad.toLowerCase()
+    );
+
     if (turnoFiltrado.length === 0) {
-     respuestaEstandar(res, 404, false, 'No se encontro el turno', turnoFiltrado);
+        return respuestaEstandar(res, 404, false,'No se encontró ningún turno para esa especialidad'
+        );
     }
 
-    return respuestaEstandar(res, 200, true, `Datos de pasientes con especialidad ${turnoFiltrado}`, turnoFiltrado);
-};
-    
+    return respuestaEstandar(res, 200, true, `Turnos de la especialidad ${especialidad}`, turnoFiltrado
+    );
+}; 
 
 module.exports = {
     getTurnos,
