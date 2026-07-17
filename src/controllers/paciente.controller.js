@@ -35,11 +35,11 @@ const createPaciente = async (req, res) => {
 const deletePaciente = async (req, res)=>{
     try {
         const { id } = req.params;
-        const turno = await Turno.findByIdAndDelete(id);
+        const turno = await Paciente.findByIdAndDelete(id);
         if (!turno) {
             return respuestaEstandar(res, 404, false, 'Paciente no encontrado');
         }
-        returnrespuestaEstandar(res, 200, true, 'Paciente eliminado correctamente', turno);
+        return respuestaEstandar(res, 200, true, 'Paciente eliminado correctamente', turno);
     } catch (error) {
        
         return respuestaEstandar(res, 400 , false, 'Error al eliminar el paciente', error.message);
