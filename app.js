@@ -15,7 +15,7 @@ const errorHandler = require('./src/middlewares/errorHandler.middleware');
 
 // Rutas
 const turnosRoutes = require('./src/routes/turnos.routes');
-
+const pacientesRoutes = require('./src/routes/pacientes.routes');
 // Middlewares globales
 app.use(cors());
 app.use(express.json());
@@ -23,7 +23,7 @@ app.use(auditoria);
 
 // Rutas
 app.use('/api/v1/turnos', turnosRoutes);
-
+app.use('/api/v1/pacientes', pacientesRoutes);
 // Middleware de manejo de errores (siempre al final)
 app.use(errorHandler);
 

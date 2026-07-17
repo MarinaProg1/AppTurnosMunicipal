@@ -9,18 +9,19 @@ const connectDB = async () => {
     }
 };
 
-mongoose.connection.on('error', (error) => {
-    console.error('❤️Error en la conexión a la base de datos:', error.message);
+mongoose.connection.on('connected', () => {
+    console.log('💚 Conexión a la base de datos establecida');
 });
 
-mongoose.connection.on('connected', () => {
-    console.log('💚 Conexión a la base de datos establecida correctamente');
+mongoose.connection.on('disconnected', () => {
+    console.log('💛 Conexión a la base de datos perdida');
 });
 
 process.on('SIGINT', async () => {
     await mongoose.connection.close();
-    console.log('❤️Conexión a la base de datos cerrada');
+    console.log('❤️ Conexión a la base de datos cerrada por terminación de la aplicación');
     process.exit(0);
 });
+
 
 module.exports = connectDB;

@@ -1,78 +1,90 @@
 const Turno = require('../models/Turno');
+const respuestaEstandar = require('../utils/respuestaEstandar');
 
-let turnos= [
-    {id:1, paciente: "Juan Perez", dni:"43567890", especialidad:"cardiología"},
-    {id:2, paciente: "Ramon Looss", dni:"40367890", especialidad:"pediatría"},
-    {id:3, paciente: "Lucia Rodriguez", dni:"33507890", especialidad:"oncología"},
-    {id:4, paciente: "Marcela Crass", dni:"23227890", especialidad:"dentista"},
-]
+const getTurnos = async (req, res) => {
+    try {
+        const turnos = await Turno.find();
 
-const respuestaEstandar = (res, status, success, message, data = null)=>{
-    return res.status(status).json({
-        success,
-        timetamp: new Date().toISOString(),
-        message,
-        total: Array.isArray(data) ? data.length : data ? 1:0,
-        data
-    });
+        return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
+
+    } catch (error) {
+        return respuestaEstandar(res, 500, false, 'Error al obtener los turnos', error.message);
+    }
 };
 
-
-
-const getTurnos = (req, res)=>{
-    respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
-};
-
-const createTurno = async (req, res)=>{
-    try{
+const createTurno = async (req, res) => {
+    try {
         const nuevoTurno = await Turno.create(req.body);
-        respuestaEstandar(res, 201, true, 'Turno creado exitosamente', nuevoTurno); 
-    }catch(error){
-        if(error.name === 'ValidationError'){
+
+        return respuestaEstandar(res, 201, true, 'Turno creado exitosamente', nuevoTurno);
+
+    } catch (error) {
+
+        if (error.name === 'ValidationError') {
+            const errores = Object.values(error.errors).map(err => err.message);
+
+            return respuestaEstandar(res, 400, false, 'Error de validación', errores);
+        }
+
+        return respuestaEstandar(res, 500, false, 'Error al crear el turno', error.message);
+    }
+};
+
+const getTurnoById = async (req, res)=>{
+    try {
+        const { id } = req.params;
+        const turno = await Turno.findById(id);
+        if (!turno) {
+            return respuestaEstandar(res, 404, false, 'Turno no encontrado');
+        }
+        respuestaEstandar(res, 200, true, 'Turno encontrado', turno);
+        
+    } catch (error) {
+         if(error.name === 'ValidationError'){
             const errores = Object.values(error.errors).map(err => err.message);
             respuestaEstandar(res, 400, false, 'Error de validación', errores);
         
         }
-            respuestaEstandar(res, 500, false, 'Error al crear el turno', error.message);
-        
+         return respuestaEstandar(res, 500, false, 'Error al eliminar el turno ', error.message);
     }
+};
     
-    
+const deleteTurno = async (req, res)=>{
+    try {
+        const { id } = req.params;
+        const turno = await Turno.findByIdAndDelete(id);
+        if (!turno) {
+            return respuestaEstandar(res, 404, false, 'Turno no encontrado');
+        }
+        returnrespuestaEstandar(res, 200, true, 'Turno eliminado correctamente', turno);
+    } catch (error) {
+       
+        return respuestaEstandar(res, 400 , false, 'Error al eliminar el turno', error.message);
+    }
 };
 
-const deleteTurnos = (req, res)=>{
-    const {id}= req.params;
-    const turnoExiste = turnos.some(t=>t.id === parseInt(id));
+const getPorEspecialidad = async (req, res) => {
+    try {
+        const { especialidad } = req.params;
+        const turnos = await Turno.find({ especialidad: especialidad });
 
-    if(!turnoExiste){
-        return respuestaEstandar(res, 404,false, 'Turno no encontrado');
+        respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
+
+    } catch (error) {
+
+        if(error.name === 'ValidationError'){
+            const errores = Object.values(error.errors).map(err => err.message);
+            respuestaEstandar(res, 400, false, 'Error de validación', errores);
+        }
+        respuestaEstandar(res, 500, false, 'Error al obtener los turnos por especialidad', error.message);
     }
-
-    turnos = turnos.filter(t=> t.id !== parseInt(id) );
-
-   respuestaEstandar(res, 200, true, 'Se elimino correctamente', turnos);
-    
 };
 
-const getPorEspecialidad = (req, res) => {
-    const { especialidad } = req.params;
-
-    const turnoFiltrado = turnos.filter(
-        t => t.especialidad.toLowerCase() === especialidad.toLowerCase()
-    );
-
-    if (turnoFiltrado.length === 0) {
-        return respuestaEstandar(res, 404, false,'No se encontró ningún turno para esa especialidad'
-        );
-    }
-
-    return respuestaEstandar(res, 200, true, `Turnos de la especialidad ${especialidad}`, turnoFiltrado
-    );
-}; 
 
 module.exports = {
     getTurnos,
+    getTurnoById,
     createTurno,
-    deleteTurnos,
+    deleteTurno,
     getPorEspecialidad
 };
