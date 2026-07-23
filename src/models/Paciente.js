@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const pacienteSchema = new mongoose.Schema({
     nombre: {
         type: String,
-        required: [true, 'El nombre del paciente es obligatorio']
+        required: [true, 'El nombre del paciente es obligatorio'],
+        uppercase: true,
     },
     dni: {
         type: String,
@@ -33,7 +34,6 @@ const pacienteSchema = new mongoose.Schema({
     email: {
         type: String,
         required: [true, 'El correo electrónico del paciente es obligatorio'],
-        unique: [true, 'El correo electrónico del paciente debe ser único'],
         match: [/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, 'El correo electrónico no es válido']
     },
     telefono: {
@@ -62,7 +62,9 @@ const pacienteSchema = new mongoose.Schema({
         }
         },
         numeroAfiliado: {
-            type: String
+            type: String,
+            unique: [true, 'El número de afiliado debe ser único'],
+            match: [/^[0-9]{1,15}$/, 'El número de afiliado no es válido']
         },
     },
     historialMedico: {
@@ -93,6 +95,15 @@ const pacienteSchema = new mongoose.Schema({
     }
 }, {
     timestamps: true
+});
+
+pacienteSchema.set('toJSON', {
+    transform: (documento, pacienteRetorno) => {
+        pacienteRetorno.id = pacienteRetorno._id;
+        delete pacienteRetorno._id;
+        delete pacienteRetorno.__v;
+        return pacienteRetorno; 
+    }
 });
 
 module.exports = mongoose.model('Paciente', pacienteSchema);

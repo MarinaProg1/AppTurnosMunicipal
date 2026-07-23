@@ -16,6 +16,9 @@ const errorHandler = require('./src/middlewares/errorHandler.middleware');
 // Rutas
 const turnosRoutes = require('./src/routes/turnos.routes');
 const pacientesRoutes = require('./src/routes/pacientes.routes');
+const medicosRoutes = require('./src/routes/medicos.routes');
+const especialidadesRoutes = require('./src/routes/especialidades.routes');
+const obrasSocialesRoutes = require('./src/routes/obrasSociales.routes');
 // Middlewares globales
 app.use(cors());
 app.use(express.json());
@@ -24,6 +27,9 @@ app.use(auditoria);
 // Rutas
 app.use('/api/v1/turnos', turnosRoutes);
 app.use('/api/v1/pacientes', pacientesRoutes);
+app.use('/api/v1/medicos', medicosRoutes);
+app.use('/api/v1/especialidades', especialidadesRoutes);
+app.use('/api/v1/obras-sociales', obrasSocialesRoutes);
 // Middleware de manejo de errores (siempre al final)
 app.use(errorHandler);
 

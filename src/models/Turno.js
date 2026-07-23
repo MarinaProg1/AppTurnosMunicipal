@@ -2,14 +2,9 @@ const mongoose = require('mongoose');
 
 const turnoSchema = new mongoose.Schema({
     paciente: {
-        type: String,
-        required: [true, 'El nombre del paciente es obligatorio'],
-        uppercase: true,
-    },
-    dni: {
-        type: String,
-        required: [true, 'El DNI es obligatorio'],  
-        match: [/^[0-9]{7,8}$/, 'El DNI debe tener 8 dígitos'],
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Paciente',
+        required: [true, 'El nombre del paciente es obligatorio'],  
     },
     especialidad: {
         type: String,
@@ -38,6 +33,15 @@ const turnoSchema = new mongoose.Schema({
     }, 
 }, {
         timestamps: true,
+});
+
+turnoSchema.set('toJSON', {
+    transform: (documento, turnoRetorno) => {
+        turnoRetorno.id = turnoRetorno._id;
+        delete turnoRetorno._id;
+        delete turnoRetorno.__v;
+        return turnoRetorno ;
+    }
 });
 
 module.exports = mongoose.model('Turno', turnoSchema);

@@ -3,7 +3,7 @@ const respuestaEstandar = require('../utils/respuestaEstandar');
 
 const getTurnos = async (req, res) => {
     try {
-        const turnos = await Turno.find();
+        const turnos = await Turno.find().populate('paciente');
 
         return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
 
@@ -33,7 +33,7 @@ const createTurno = async (req, res) => {
 const getTurnoById = async (req, res)=>{
     try {
         const { id } = req.params;
-        const turno = await Turno.findById(id);
+        const turno = await Turno.findById(id).populate('paciente');
         if (!turno) {
             return respuestaEstandar(res, 404, false, 'Turno no encontrado');
         }
