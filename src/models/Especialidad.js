@@ -3,12 +3,21 @@ const mongoose = require('mongoose');
 const especialidadSchema = new mongoose.Schema({  
     nombre: {
          type: String,
-         required: true 
+         required: true,
+         unique: true
         },
     descripcion: {
         type: String, 
         required: true  
-    }   
+    },
+    categoria: {
+        type: String,
+        required: true
+    },
+    activo: {
+        type: Boolean,
+        default: true,
+    }
     
 });
 especialidadSchema.set('toJSON', {

@@ -12,6 +12,8 @@ const medicoSchema = new mongoose.Schema({
     dni: { 
         type: String, 
         required: true,
+        unique: [true, 'El DNI del paciente debe ser único'],
+        match: [/^[0-9]{7,8}$/, 'El DNI debe tener 8 dígitos']
     },
     matricula: { 
         type: String, 
@@ -28,14 +30,30 @@ const medicoSchema = new mongoose.Schema({
         required: true, 
         unique: true },
     telefono: { 
-        type: String, 
-        required: true 
+        tipo: {
+            type: String,
+            enum: ['CELULAR', 'FIJO', 'TRABAJO']
+        },
+        codigoArea: {
+            type: String,
+            required: true,
+            match: [/^[0-9]{2,5}$/, 'El código de área no es válido']
+        },
+        numero: {
+            type: String,
+            required: true,
+            match: [/^[0-9]{7,10}$/, 'El número de teléfono no es válido']
+        }
     },
     obrasSociales:[{
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'ObraSocial', 
         required: true 
-    }]   
+    }],
+    activo: {
+        type: Boolean,
+        default: true,
+    }   
 });
  medicoSchema.set('toJSON', {
     transform: (documento, medicoRetorno) => {

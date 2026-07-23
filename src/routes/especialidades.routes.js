@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getMedicos, createMedico, deleteMedico } = require('../controllers/medico.controller'); 
+const { getEspecialidades, createEspecialidad} = require('../controllers/especialidad.controller'); 
 
-router.get('/', getMedicos);
-router.post('/', createMedico);
-router.delete('/:id', deleteMedico);
+router.get('/', getEspecialidades);
+router.post('/', createEspecialidad);
+
 
 module.exports = router;

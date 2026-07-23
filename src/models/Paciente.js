@@ -54,12 +54,8 @@ const pacienteSchema = new mongoose.Schema({
     },
     obraSocial: {
         nombre: {
-            type: String,
-            required: [true, 'El nombre de la obra social es obligatorio'],
-            enum: {
-            values: ['PAMI', 'OSPEL', 'OSDE', 'SANCOR', 'OSECAC', 'SWISS MEDICAL', 'GALENO', 'MEDICUS', 'OMINT', 'FEMEBA', 'OTRAS', 'NINGUNA'],
-            message: '{VALUE} no es una obra social válida. Debe ser una de las siguientes: PAMI, OSPEL, OSDE, SANCOR, OSECAC, SWISS MEDICAL, GALENO, MEDICUS, OMINT, FEMEBA, OTRAS, NINGUNA'
-        }
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ObraSocial'
         },
         numeroAfiliado: {
             type: String,
@@ -87,12 +83,17 @@ const pacienteSchema = new mongoose.Schema({
             required: [true, 'El tratamiento es obligatorio']
 
         },
-        medico: {
-            type: String,
-            required: [true, 'El nombre del médico es obligatorio']
-        }
+        medico:[{    
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Medico',
+            required: [true, 'El médico es obligatorio']
+        }]
        
-    }
+    },
+    activo: {
+        type: Boolean,
+        default: true,
+    }   
 }, {
     timestamps: true
 });

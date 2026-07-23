@@ -7,12 +7,9 @@ const turnoSchema = new mongoose.Schema({
         required: [true, 'El nombre del paciente es obligatorio'],  
     },
     especialidad: {
-        type: String,
-        required: true,
-        enum: {
-            values: ['cardiología', 'dermatología', 'ginecología', 'neurología', 'pediatría'],
-            message: '{VALUE} no es una especialidad válida. Debe ser una de las siguientes: cardiología, dermatología, ginecología, neurología, pediatría'
-        }
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Especialidad',
+        required: [true, 'La especialidad es obligatoria']
     },
    fechaTurno: {
         type: Date,
@@ -31,6 +28,10 @@ const turnoSchema = new mongoose.Schema({
             message: '{VALUE} no es un estado válido',
         },
     }, 
+    activo: {
+        type: Boolean,
+        default: true,
+    },
 }, {
         timestamps: true,
 });

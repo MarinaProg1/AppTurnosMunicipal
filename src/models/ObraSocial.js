@@ -33,7 +33,13 @@ const obraSocialSchema = new mongoose.Schema({
             values: ['Básico', 'Intermedio', 'Premium'],
             message: '{VALUE} no es un plan válido. Debe ser uno de los siguientes: Básico, Intermedio, Premium'
         }
-    }] 
+    }] ,
+    activo: {
+        type: Boolean,
+        default: true,
+    }
+}, {
+    timestamps: true    
 });
 
 obraSocialSchema.set('toJSON', {

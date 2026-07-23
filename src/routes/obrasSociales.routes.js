@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { getMedicos, createMedico, deleteMedico } = require('../controllers/medico.controller'); 
+const { getObrasSociales, createObraSocial } = require('../controllers/obraSocial.controller'); 
 
 
-router.get('/', getMedicos);
-router.post('/', createMedico);
-router.delete('/:id', deleteMedico);    
+router.get('/', getObrasSociales);
+router.post('/', createObraSocial);
+ 
 
 module.exports = router;

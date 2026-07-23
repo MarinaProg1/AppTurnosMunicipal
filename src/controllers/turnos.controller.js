@@ -80,11 +80,23 @@ const getPorEspecialidad = async (req, res) => {
     }
 };
 
+const getTurnosPorFecha = async (req, res) => {
+    try {
+        const { fechaTurno } = req.params;
+        const turnos = await Turno.find({ fecha: fechaTurno })
+                                      .populate('paciente')
+                                      .populate('especialidad') ;
+        return respuestaEstandar(res, 200, true, 'Turnos obtenidos exitosamente', turnos);
+    } catch (error) {
+        return respuestaEstandar(res, 500, false, 'Error al obtener los turnos por fecha', error.message);
+    }
+};
 
 module.exports = {
     getTurnos,
     getTurnoById,
     createTurno,
     deleteTurno,
-    getPorEspecialidad
-};
+    getPorEspecialidad,
+    getTurnosPorFecha
+};  
